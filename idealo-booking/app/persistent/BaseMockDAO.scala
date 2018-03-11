@@ -7,9 +7,9 @@ trait BaseMockDAO[T] {
   //TODO : change implementation to map. 
   private val data = new ListBuffer[T]
 
-  def create(t: T): List[T] = {
+  def create(t: T): T = {
     data += t
-    data.toList
+    t
   }
 
   def delete(t: T): List[T] = {

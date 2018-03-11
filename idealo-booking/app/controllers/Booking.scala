@@ -1,25 +1,63 @@
 package controllers
 
-import play.api.mvc.Controller;
-import play.api.mvc.Action;
 import play.api.libs.json.Json
-
-import service.BookingService;
+import play.api.mvc.Action
+import play.api.mvc.Controller
+import response.BookingResponse
+import service.BookingService
+import payload.BookingRequest
+import response.BookedTrip
+import play.api.libs.json._
+import play.api.mvc._
 class Booking extends Controller {
-  
+
   val bookingService = BookingService()
-  
-  def commit = Action {
-    Ok("Commit method");
+
+  //  curl -H "Content-type: application/json" -X POST -d '{"email":"user2@gmail.com","travelCode":"fb-1","travelTimestamp":"2018-04-09 09:00:00","noOfSeat":2}' http://localhost:9000/commit
+  implicit val requestFormatter = Json.format[BookingRequest]
+  implicit val jsonFormatter = Json.format[BookedTrip]
+  implicit val bookingRespnseFormatter = Json.format[BookingResponse]
+
+  //  implicit val responseFormatter = Json.format[Response[BookingResponse]]
+
+  def commit() = Action {
+    request =>
+      {
+        val jsValue = request.body.asJson.get
+        val bookingRequest = jsValue.as[BookingRequest]
+        val bookingResult = bookingService.bookTransport(bookingRequest)
+        val response = Json.toJson(bookingResult)
+        Ok(response)
+
+      }
   }
 
-  //TODO set up the path param
-  //curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://www.localhost.com:9000/booking
+  //curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://www.localhost.com:9000/booking/{bookingId}
+  def bookings(bookingId: String) = Action {
 
-  def bookings = Action {
-   val bookings = bookingService.bookingsForUser("1")
-//    Ok("OK")
-   Ok(Json.toJson(bookings));
+    val bookings = bookingService.bookingsForUser(bookingId)
+    val result: JsObject = bookings match {
+      case Right(data) => createOk(Json.toJson(data))
+      case Left(error)   => createError(error)
+
+    }
+    Ok(result)
+
+  }
+
+  def createError(message: String): JsObject = {
+    val jsonobj = Json.obj(
+      "status" -> "OK",
+      "errorMessage" -> message)
+    jsonobj
+  }
+
+  def createOk(jsValue: JsValue): JsObject = {
+    val jsonobj = Json.obj(
+      "status" -> "OK",
+      "data" -> jsValue,
+      "errorMessage" -> "")
+    jsonobj
 
   }
 

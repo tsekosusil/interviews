@@ -8,13 +8,16 @@ import persistent.TravelDAO
 import response.BookingResponse
 import java.util.Date
 import javax.inject._
-import model.User
-import model.Travel
+import model._
+import response._
+
 
 sealed trait BookingService {
   //  case class Booking(bookingId:String,userId:String,travelCode:String,travelTimestamp:Date,bookingTimestamp:Date,deleted:Boolean) {
-  def bookTransport(request: BookingRequest): Boolean
-  def bookingsForUser(userId: String): List[BookingResponse]
+  //  def bookTransport(request: BookingRequest): Boolean
+  def bookTransport(request: BookingRequest): Option[BookedTrip]
+
+  def bookingsForUser(userId: String): Either[String, BookingResponse]
 
 }
 
@@ -63,19 +66,30 @@ object BookingService {
     }
 
     //TODO booking timestamp needs to be stored on which timezone?
-    override def bookTransport(request: BookingRequest): Boolean = {
+    override def bookTransport(request: BookingRequest): Option[BookedTrip] = {
       val user = userDao.findOne(user => user.email == request.email)
+      println("FOUND user = " + user);
       val travel = travelDao.findOne(travel => travel.travelCode == request.travelCode)
+      println("FOUND travel = " + travel);
+
       for (a <- 1 to request.noOfSeat if user.isDefined && travel.isDefined) {
         val booking = Booking("", user.get, travel.get, request.travelTimestamp, new Date(System.currentTimeMillis()));
-        bookingDao.create(booking);
+        val newBooking = bookingDao.create(booking);
+        val bookingResponse = BookingResponse.toBookedTrip(newBooking)
+        return Option(bookingResponse)
       }
-      true
+      return Option.empty
     }
 
-    override def bookingsForUser(userId: String): List[BookingResponse] = {
-      val bookingBean = bookingDao.filter(booking => booking.user.userId == userId)
-      bookingBean.collect { case elt: Booking => BookingResponse.toBookingResponse(elt) }
+    override def bookingsForUser(userId: String): Either[String, BookingResponse] = {
+      val user = userDao.findOne(curUser => curUser.userId.equals(userId))
+      if (user.isDefined) {
+        val bookingBean = bookingDao.filter(booking => booking.user.userId == userId)
+        val bookingResponse = BookingResponse.toBookingResponse(user.get, bookingBean)
+        Right(bookingResponse)
+      } else {
+        Left("User not registered")
+      }
     }
   }
 }

@@ -3,6 +3,8 @@
 # ~~~~
 
 # Home page
-GET		/booking					controllers.Booking.bookings
+GET		/booking/:bookingId					controllers.Booking.bookings(bookingId:String)
 
-GET		/commit						controllers.Booking.commit
+POST	/commit						controllers.Booking.commit
+
+
