@@ -1,4 +1,28 @@
-This is your new Play application
-=================================
+Solution for the challange
 
-This file will be packaged with your application, when using `activator dist`.
+progress log as 11 March 2018
+Day 1:
+1. Creating the project using activator and setting up the sbt
+2. Implementation of model and DAO. so far 3 entities identified and 4 DAOs are created
+3. Implementation of service layer for both services needed; booking and commit. tested using scala worksheet.
+4. adding mock data.
+5. Implementation of the "booking" service for specifying the booking id, the booking id is hard coded for now.
+
+
+Day 2:
+1. remove the hard code on booking service, set the booking id as path parameter
+2. implementation of the "commit" service by POST http method.
+3. Implementation of an entity that represents a generic response, containing the status of the request (OK, KO), the data,
+  or error messages if any.
+4. Refactor of the services to provide response using the generic response.
+
+Plan for next weekend:
+Mandatory:
+1. Find out how to implement unit tests using scala, if not possible maybe using plain junit
+2. Write unit tests based on the test case specified to vlosvodod
+3. Write documentation
+
+Optional:
+
+
+
