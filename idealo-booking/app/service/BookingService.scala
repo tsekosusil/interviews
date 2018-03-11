@@ -15,7 +15,7 @@ import response._
 sealed trait BookingService {
   //  case class Booking(bookingId:String,userId:String,travelCode:String,travelTimestamp:Date,bookingTimestamp:Date,deleted:Boolean) {
   //  def bookTransport(request: BookingRequest): Boolean
-  def bookTransport(request: BookingRequest): Option[BookedTrip]
+  def bookTransport(request: BookingRequest): Either[String,BookedTrip]
 
   def bookingsForUser(userId: String): Either[String, BookingResponse]
 
@@ -66,7 +66,7 @@ object BookingService {
     }
 
     //TODO booking timestamp needs to be stored on which timezone?
-    override def bookTransport(request: BookingRequest): Option[BookedTrip] = {
+    override def bookTransport(request: BookingRequest): Either[String,BookedTrip] = {
       val user = userDao.findOne(user => user.email == request.email)
       println("FOUND user = " + user);
       val travel = travelDao.findOne(travel => travel.travelCode == request.travelCode)
@@ -76,9 +76,12 @@ object BookingService {
         val booking = Booking("", user.get, travel.get, request.travelTimestamp, new Date(System.currentTimeMillis()));
         val newBooking = bookingDao.create(booking);
         val bookingResponse = BookingResponse.toBookedTrip(newBooking)
-        return Option(bookingResponse)
+        return Right(bookingResponse)
       }
-      return Option.empty
+      
+      if(travel.isEmpty) Left("Travel code is not valid")
+      else if(user.isEmpty) Left("user is not registered")
+      else Left("unknown")
     }
 
     override def bookingsForUser(userId: String): Either[String, BookingResponse] = {

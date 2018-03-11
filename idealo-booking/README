@@ -23,6 +23,6 @@ Mandatory:
 3. Write documentation
 
 Optional:
-
+1. change implementation of data storage to map, to enable update.
 
 

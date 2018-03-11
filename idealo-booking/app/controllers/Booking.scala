@@ -18,7 +18,6 @@ class Booking extends Controller {
   implicit val jsonFormatter = Json.format[BookedTrip]
   implicit val bookingRespnseFormatter = Json.format[BookingResponse]
 
-  //  implicit val responseFormatter = Json.format[Response[BookingResponse]]
 
   def commit() = Action {
     request =>
@@ -26,8 +25,11 @@ class Booking extends Controller {
         val jsValue = request.body.asJson.get
         val bookingRequest = jsValue.as[BookingRequest]
         val bookingResult = bookingService.bookTransport(bookingRequest)
-        val response = Json.toJson(bookingResult)
-        Ok(response)
+        val js = bookingResult match{
+          case Left(error) => createError(error)
+          case Right(data) => createOk(Json.toJson(data))
+        }
+        Ok(js)
 
       }
   }
