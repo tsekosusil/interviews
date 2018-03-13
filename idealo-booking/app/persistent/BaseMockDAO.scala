@@ -24,7 +24,7 @@ trait BaseMockDAO[T] {
   
   def filter(predicate:T => Boolean):List[T] = data.filter(predicate).toList
   
-  //TODO
+  //TODO map makes deletion and update fast!
   def update(t:T) = ???
   
 }

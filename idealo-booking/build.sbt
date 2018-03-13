@@ -12,6 +12,12 @@ libraryDependencies ++= Seq(
   ws,
   specs2 % Test
 )
+libraryDependencies ++= Seq(
+  "junit" % "junit" % "4.11" % Test,
+  "com.novocode" % "junit-interface" % "0.11" % Test
+        exclude("junit", "junit-dep")
+)
+
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 
