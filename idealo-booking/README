@@ -25,4 +25,11 @@ Mandatory:
 Optional:
 1. change implementation of data storage to map, to enable update.
 
+TODO List
+1. Put the noOfSeat on booking entity and refactor booking service commit booking.
+2. Create another entity represent tripid, trip timestamp, noOf seat and deduct each seat
+3. Add business logic to refuse the seat when booking is full
+4. architectural issue, creating a DAO instead of sharing is a good approach? to do investigate the dependency injection on scala.
+
+
 

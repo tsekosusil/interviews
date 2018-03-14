@@ -1,16 +1,18 @@
-import org.junit.Assert.assertTrue
-import org.junit.Assert.assertFalse
+import java.util.Date
 
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-import service.BookingService
 import payload.BookingRequest
-import java.util.Date
+import service.BookingService
+import persistentTwo._
 
 class ServiceTest {
 
   val bookingService = BookingService()
+  val travelScheduleDao = new TravelScheduleDAO2()
 
   @Before
   def init() {
@@ -38,44 +40,66 @@ class ServiceTest {
     assertTrue(result.left.get.equals("User not registered"));
 
   }
-  
-//  email:String,
-//  travelCode:String,
-//  travelTimestamp:Date,
-//  noOfSeat:Int
-//  
+
+  //  email:String,
+  //  travelCode:String,
+  //  travelTimestamp:Date,
+  //  noOfSeat:Int
+  //  
   @Test
   def testBookingOk() {
-    val request = BookingRequest("user1@gmail.com","fb-1",new Date(),1);
+    val travelDate = new Date(1521050400000l)
+    println(travelDate)
+    val request = BookingRequest("user1@gmail.com", "fb-1", travelDate, 1);
     val bookedTrip = bookingService.bookTransport(request)
     val trips = bookingService.bookingsForUser("1")
+    println(bookedTrip)
     //the service return the booking
     assertTrue(bookedTrip.isRight)
     //booking must have booking id for retrival
     assertFalse(bookedTrip.right.get.bookingId.isEmpty())
     //booking is stored
-    assertTrue(trips.right.get.trips.filter(curTrip => curTrip.bookingId.equals(bookedTrip.right.get.bookingId)).size>0)
+    assertTrue(trips.right.get.trips.filter(curTrip => curTrip.bookingId.equals(bookedTrip.right.get.bookingId)).size > 0)
   }
-  
+
   @Test
-  def testBookingUnknownEmail(){
-    
+  def testBookingUnknownEmail() {
+    val request = BookingRequest("shinchan@gmail.com", "fb-1", new Date(), 1);
+    val bookedTrip = bookingService.bookTransport(request)
+    val trips = bookingService.bookingsForUser("1")
+    //the service return the booking
+    assertTrue(bookedTrip.isLeft)
+    assertTrue(bookedTrip.left.get.equals("User not registered"))
   }
-  
+
   @Test
-  def testBookingUnknownTravelCode(){
-    
+  def testBookingUnknownTravelCode() {
+
   }
-  
+
   @Test
-  def testBookingWrongTravelTimestamp(){
-    
+  def testBookingWrongTravelTimestamp() {
+
   }
-  
+
   @Test
-  def testBookingWrongNoOfSeat(){
-    
+  def testBookingWrongNoOfSeat() {
+
   }
-  
- 
+
+  @Test
+  def testBookingOverbookedTravel() {
+    val travelDate = new Date(1521050400000l)
+    println(travelDate)
+    val request = BookingRequest("user1@gmail.com", "fb-1", travelDate, 5);
+    val bookedTrip = bookingService.bookTransport(request)
+    val trips = bookingService.bookingsForUser("1")
+    println(bookedTrip)
+    //the service return the booking
+    assertTrue(bookedTrip.isLeft)
+    //booking must have booking id for retrival
+    assertTrue(bookedTrip.left.get.equals("There are seat left for this travel"))
+
+  }
+
 }
