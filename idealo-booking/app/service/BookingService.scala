@@ -2,15 +2,12 @@ package service
 
 import payload.BookingRequest
 import model.Booking
-import persistent.UserDAO
-import persistent.BookingDAO
-import persistent.TravelDAO
+
 import response.BookingResponse
 import java.util.Date
 import javax.inject._
 import model._
 import response._
-import persistent.TravelScheduleDAO
 import persistentTwo.BookingDAO2
 import persistentTwo.TravelDAO2
 import persistentTwo.TravelScheduleDAO2
@@ -50,17 +47,17 @@ object BookingService {
       val travel4 = Travel("fb-4", "Munich", "Berlin")
 
       //      (travelId:String, travelTimestamp:Date,seatAvailable:Int)
-      val travelSchedule1 = TravelSchedule(UUID.randomUUID().toString(),"fb-1", new Date(1521050400000l), 2)
-      val travelSchedule2 = TravelSchedule(UUID.randomUUID().toString(),"fb-1", new Date(1521136800000l), 30)
+      val travelSchedule1 = TravelSchedule(UUID.randomUUID().toString(), "fb-1", new Date(1521050400000l), 2)
+      val travelSchedule2 = TravelSchedule(UUID.randomUUID().toString(), "fb-1", new Date(1521136800000l), 30)
 
-      val travelSchedule3 = TravelSchedule(UUID.randomUUID().toString(),"fb-2", new Date(1521048600000l), 4)
-      val travelSchedule4 = TravelSchedule(UUID.randomUUID().toString(),"fb-2", new Date(1521135000000l), 50)
+      val travelSchedule3 = TravelSchedule(UUID.randomUUID().toString(), "fb-2", new Date(1521048600000l), 4)
+      val travelSchedule4 = TravelSchedule(UUID.randomUUID().toString(), "fb-2", new Date(1521135000000l), 50)
 
-      val travelSchedule5 = TravelSchedule(UUID.randomUUID().toString(),"fb-3", new Date(1521034200000l), 1)
-      val travelSchedule6 = TravelSchedule(UUID.randomUUID().toString(),"fb-3", new Date(1521120600000l), 40)
+      val travelSchedule5 = TravelSchedule(UUID.randomUUID().toString(), "fb-3", new Date(1521034200000l), 1)
+      val travelSchedule6 = TravelSchedule(UUID.randomUUID().toString(), "fb-3", new Date(1521120600000l), 40)
 
-      val travelSchedule7 = TravelSchedule(UUID.randomUUID().toString(),"fb-4", new Date(1521016200000l), 2)
-      val travelSchedule8 = TravelSchedule(UUID.randomUUID().toString(),"fb-4", new Date(1521102600000l), 13)
+      val travelSchedule7 = TravelSchedule(UUID.randomUUID().toString(), "fb-4", new Date(1521016200000l), 2)
+      val travelSchedule8 = TravelSchedule(UUID.randomUUID().toString(), "fb-4", new Date(1521102600000l), 13)
 
       userDao.create(user1)
       userDao.create(user2)
@@ -68,7 +65,7 @@ object BookingService {
       travelDao.create(travel2)
       travelDao.create(travel3)
       travelDao.create(travel4)
-      
+
       travelScheduleDao.create(travelSchedule1)
       travelScheduleDao.create(travelSchedule2)
       travelScheduleDao.create(travelSchedule3)
@@ -77,7 +74,7 @@ object BookingService {
       travelScheduleDao.create(travelSchedule6)
       travelScheduleDao.create(travelSchedule7)
       travelScheduleDao.create(travelSchedule8)
-      
+
       println(travelScheduleDao.findAll)
 
       bookingDao.create(Booking("book-1",
@@ -96,23 +93,26 @@ object BookingService {
 
     //TODO put the num of seat on booking instance. 
     override def bookTransport(request: BookingRequest): Either[String, BookedTrip] = {
-      val user = userDao.findOne(user => user.email == request.email)
-      val travel = travelDao.findOne(travel => travel.travelCode == request.travelCode)
-      val travelSchedule = travelScheduleDao.findOne(ts => ts.travelId.equals(request.travelCode) &&
-        ts.travelTimestamp.equals(request.travelTimestamp) &&
-        ts.seatAvailable >= request.noOfSeat)
-
-      if (travel.isEmpty) Left("Travel code is not valid")
-      else if (user.isEmpty) Left("User not registered")
-      else if (travelSchedule.isEmpty) Left("There are seat left for this travel")
+      if (request.noOfSeat <= 0) Left("Wrong number of seat")
       else {
-        val booking = Booking("", user.get, travel.get, request.travelTimestamp, new Date(System.currentTimeMillis()), 1);
-        val newBooking = bookingDao.create(booking);
-        val bookingResponse = BookingResponse.toBookedTrip(newBooking)
-        val tsBean = travelSchedule.get
-        val newTravelSchedule = TravelSchedule(tsBean.key,tsBean.travelId, tsBean.travelTimestamp, tsBean.seatAvailable - request.noOfSeat)
-        travelScheduleDao.update(newTravelSchedule)
-        return Right(bookingResponse)
+        val user = userDao.findOne(user => user.email == request.email)
+        val travel = travelDao.findOne(travel => travel.travelCode == request.travelCode)
+        val travelSchedule = travelScheduleDao.findOne(ts => ts.travelId.equals(request.travelCode) &&
+          ts.travelTimestamp.equals(request.travelTimestamp) &&
+          ts.seatAvailable >= request.noOfSeat)
+
+        if (travel.isEmpty) Left("Travel code is not valid")
+        else if (user.isEmpty) Left("User not registered")
+        else if (travelSchedule.isEmpty) Left("There are seat left for this travel")
+        else {
+          val booking = Booking("", user.get, travel.get, request.travelTimestamp, new Date(System.currentTimeMillis()), 1);
+          val newBooking = bookingDao.create(booking);
+          val bookingResponse = BookingResponse.toBookedTrip(newBooking)
+          val tsBean = travelSchedule.get
+          val newTravelSchedule = TravelSchedule(tsBean.key, tsBean.travelId, tsBean.travelTimestamp, tsBean.seatAvailable - request.noOfSeat)
+          travelScheduleDao.update(newTravelSchedule)
+          return Right(bookingResponse)
+        }
       }
     }
 
