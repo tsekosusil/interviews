@@ -12,7 +12,7 @@ import persistentTwo._
 class ServiceTest {
 
   val bookingService = BookingService()
-  val travelScheduleDao = new TravelScheduleDAO2()
+  val travelScheduleDao = new TravelScheduleRepository()
 
   @Before
   def init() {

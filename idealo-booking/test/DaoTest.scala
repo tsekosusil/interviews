@@ -9,8 +9,8 @@ class DaoTest {
 
   @Test
   def testDao {
-    val userDao: UserDAO2 = new UserDAO2();
-    val bookingDao = new BookingDAO2();
+    val userDao: UserRepository = new UserRepository();
+    val bookingDao = new BookingRepository();
     val travelDao = new TravelDAO();
     val travelScheduleDao = new TravelScheduleDAO();
 

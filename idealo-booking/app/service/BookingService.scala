@@ -8,16 +8,15 @@ import java.util.Date
 import javax.inject._
 import model._
 import response._
-import persistentTwo.BookingDAO2
-import persistentTwo.TravelDAO2
-import persistentTwo.TravelScheduleDAO2
-import persistentTwo.UserDAO2
+import persistentTwo.BookingRepository
+import persistentTwo.TravelRepository
+import persistentTwo.TravelScheduleRepository
+import persistentTwo.UserRepository
 
 import java.util.UUID
 
 sealed trait BookingService {
-  //  case class Booking(bookingId:String,userId:String,travelCode:String,travelTimestamp:Date,bookingTimestamp:Date,deleted:Boolean) {
-  //  def bookTransport(request: BookingRequest): Boolean
+
   def bookTransport(request: BookingRequest): Either[String, BookedTrip]
 
   def bookingsForUser(userId: String): Either[String, BookingResponse]
@@ -33,10 +32,10 @@ object BookingService {
 
   private class BookingServiceImpl extends BookingService {
 
-    val userDao = new UserDAO2();
-    val bookingDao = new BookingDAO2();
-    val travelDao = new TravelDAO2();
-    val travelScheduleDao = new TravelScheduleDAO2();
+    val userDao = new UserRepository();
+    val bookingDao = new BookingRepository();
+    val travelDao = new TravelRepository();
+    val travelScheduleDao = new TravelScheduleRepository();
 
     def mockData = {
       val user1 = User("1", "user1@gmail.com", false)
