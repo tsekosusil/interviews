@@ -46,7 +46,6 @@ object BookingService {
       val travel3 = Travel("fb-3", "Stuttgart", "Berlin")
       val travel4 = Travel("fb-4", "Munich", "Berlin")
 
-      //      (travelId:String, travelTimestamp:Date,seatAvailable:Int)
       val travelSchedule1 = TravelSchedule(UUID.randomUUID().toString(), "fb-1", new Date(1521050400000l), 2)
       val travelSchedule2 = TravelSchedule(UUID.randomUUID().toString(), "fb-1", new Date(1521136800000l), 30)
 
