@@ -11,3 +11,7 @@ class BookingRepository extends BaseMockRepository[String, Booking] {
     super.create(newBooking)
   }
 }
+
+object BookingRepository{
+  implicit val bookingRepository = new BookingRepository()
+}

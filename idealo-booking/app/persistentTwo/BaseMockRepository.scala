@@ -23,5 +23,6 @@ trait BaseMockRepository[K, T <: BaseEntity[K]] {
 
   def update(t: T) = data(t.getKey()) = t
 
+  //useful only for debug/test while in memory mode  
   def findAll = data.values.toList
 }

@@ -14,7 +14,7 @@ object BookingResponse {
 
   }
 
-  def toBookedTrip(booking: Booking): BookedTrip = {
+ implicit def toBookedTrip(booking: Booking): BookedTrip = {
     BookedTrip(booking.bookingId, booking.travel.travelCode, booking.travelTimestamp, booking.travel.departurePoint, booking.travel.arrivalPoint)
   }
 

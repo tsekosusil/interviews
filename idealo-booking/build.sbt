@@ -18,6 +18,8 @@ libraryDependencies ++= Seq(
         exclude("junit", "junit-dep")
 )
 
+libraryDependencies += "com.google.inject" % "guice" % "3.0"
+
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 

@@ -1,13 +1,13 @@
-import java.util.Date
+package service
 
+import java.util.Date
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-
 import payload.BookingRequest
-import service.BookingService
 import persistentTwo._
+import util.Constants._
 
 class ServiceTest {
 
@@ -30,14 +30,14 @@ class ServiceTest {
   def testCheckBookingUnknownUser() {
     val result = bookingService.bookingsForUser("shinchan");
     assertTrue(result.isLeft)
-    assertTrue(result.left.get.equals("User not registered"));
+    assertTrue(result.left.get.equals(USER_NOT_REGISTERED_ERROR));
   }
 
   @Test
   def testCheckBookingNullArg() {
     val result = bookingService.bookingsForUser(null);
     assertTrue(result.isLeft)
-    assertTrue(result.left.get.equals("User not registered"));
+    assertTrue(result.left.get.equals(USER_NOT_REGISTERED_ERROR));
 
   }
 
@@ -64,7 +64,7 @@ class ServiceTest {
     val trips = bookingService.bookingsForUser("1")
     //the service return the booking
     assertTrue(bookedTrip.isLeft)
-    assertTrue(bookedTrip.left.get.equals("User not registered"))
+    assertTrue(bookedTrip.left.get.equals(USER_NOT_REGISTERED_ERROR))
   }
 
   @Test
@@ -81,7 +81,7 @@ class ServiceTest {
     //booking must have booking id for retrival
     //booking is stored
 
-    assertTrue(bookedTrip.left.get.equals("Travel code is not valid"))
+    assertTrue(bookedTrip.left.get.equals(TRAVEL_CODE_NOT_VALID_ERROR))
 
   }
 
@@ -95,10 +95,7 @@ class ServiceTest {
 
     //the service return the booking
     assertTrue(bookedTrip.isLeft)
-    //booking must have booking id for retrival
-    //booking is stored
-
-    assertTrue(bookedTrip.left.get.equals("Travel code is not valid"))
+    assertTrue(bookedTrip.left.get.equals(TRAVEL_CODE_NOT_VALID_ERROR))
   }
 
   @Test
@@ -112,7 +109,7 @@ class ServiceTest {
     //the service return the booking
     assertTrue(bookedTrip.isLeft)
     //booking is stored
-    assertTrue(bookedTrip.left.get.equals("Wrong number of seat"))
+    assertTrue(bookedTrip.left.get.equals(INVALID_SEAT_ARGUMENT_ERROR))
 
   }
 
@@ -123,11 +120,10 @@ class ServiceTest {
     val request = BookingRequest("user1@gmail.com", "fb-1", travelDate, 5);
     val bookedTrip = bookingService.bookTransport(request)
     val trips = bookingService.bookingsForUser("1")
-    //    println(bookedTrip)
     //the service return the booking
     assertTrue(bookedTrip.isLeft)
     //booking must have booking id for retrival
-    assertTrue(bookedTrip.left.get.equals("There are seat left for this travel"))
+    assertTrue(bookedTrip.left.get.equals(NO_SEAT_LEFT_ERROR))
 
   }
 
