@@ -23,10 +23,10 @@ Day 3:
 4. Create another entity represent tripid, trip timestamp, noOf seat and deduct each seat, and update the no of seat available once booking executed.
 5. Put the noOfSeat on booking entity and refactor booking service commit booking.
 
-Next plans
-Mandatory:
-1. Find out how to implement unit tests using scala, if not possible maybe using plain junit
-2. Write unit tests based on the test case specified to vlosvodod
-3. Write documentation
+
+Day 4:
+1. Tried some dependency injection framework, does not make sense to take spring to this project, so use implicit class parameter as a workaround 
+	dependency injection
+2. write documentation
 
 

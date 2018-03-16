@@ -92,6 +92,7 @@ object BookingService {
     override def bookTransport(request: BookingRequest): Either[String, BookedTrip] = {
       if (request.noOfSeat <= 0) Left(INVALID_SEAT_ARGUMENT_ERROR)
       else {
+        println(request.travelTimestamp)
         val user = userDao.findOne(user => user.email == request.email)
         val travel = travelDao.findOne(travel => travel.travelCode == request.travelCode)
         val travelSchedule = travelScheduleDao.findOne(ts => ts.travelId.equals(request.travelCode) &&

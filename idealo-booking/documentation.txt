@@ -1,0 +1,66 @@
+===================================================
+Title: Show all booking for particular user
+Url : /booking/:userId
+Method : GET
+URL params: 
+required
+1. userId:String => the unique user identifier
+
+
+Response succesfull showing bookings
+{
+	"status": "OK",
+	"data": {
+		"userId": "1",
+		"email": "user1@gmail.com",
+		"trips": [
+			{
+				"bookingId": "49-1521237766978",
+				"travelId": "fb-1",
+				"travelTime": "16-03-2018 11:02:46",
+				"departure": "Berlin",
+				"arrival": "Munich"
+			}
+		]
+	},
+	"errorMessage": ""
+}
+
+Response if fail (User not registered)
+{
+	"status": "OK",
+	"errorMessage": "User not registered"
+}
+
+===================================================
+Title : Perform a booking for a given uer
+URL : /commit
+Method :  POST 
+Data Params : 
+{
+"email":String(user email),
+"travelCode":String(travel/flight unique identifation code),
+"travelTimestamp":Date(the timestamp on which the journey will start),
+"noOfSeat":Int(number of seat to be booked)
+}
+
+Response Codes: 
+
+1. Succesfull booking:  
+  {
+	"status": "OK",
+	"data": {
+		"bookingId": "50-1521238854456",
+		"travelId": "fb-1",
+		"travelTime": "14-03-2018 07:00:00",
+		"departure": "Berlin",
+		"arrival": "Munich"
+	},
+	"errorMessage": ""
+}
+2. Trying to book overbooked journey
+{"status":"OK","errorMessage":"Not enough seat available"}
+3. Trying to book as unregistered user
+{"status":"OK","errorMessage":"User not registered"}
+4. Trying to specify invalid travel code
+{"status":"OK","errorMessage":"Travel code not valid"}

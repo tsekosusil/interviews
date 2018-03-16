@@ -9,7 +9,7 @@ import payload.BookingRequest
 import response.BookedTrip
 import play.api.libs.json._
 import play.api.mvc._
-class Booking extends Controller {
+class Booking extends Controller with ResponseCreator {
 
   val bookingService = BookingService()
 
@@ -47,20 +47,6 @@ class Booking extends Controller {
 
   }
 
-  def createError(message: String): JsObject = {
-    val jsonobj = Json.obj(
-      "status" -> "OK",
-      "errorMessage" -> message)
-    jsonobj
-  }
-
-  def createOk(jsValue: JsValue): JsObject = {
-    val jsonobj = Json.obj(
-      "status" -> "OK",
-      "data" -> jsValue,
-      "errorMessage" -> "")
-    jsonobj
-
-  }
+ 
 
 }
